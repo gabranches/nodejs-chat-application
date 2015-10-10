@@ -1,9 +1,17 @@
-var app = require('express')()
-var http = require('http').Server(app)
-var io = require('socket.io')(http)
+var express = require('express')
+  , http = require('http');
+
+var app = express();
+var server = app.listen(5000);
+var io = require('socket.io').listen(server);
+
+
+app.use(express.static(__dirname + '/static'));
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
-	res.sendFile(__dirname + '/index.html')
+	res.render('pages/index')
 })
 
 
@@ -13,6 +21,6 @@ io.on('connection', function(socket){
   })
 })
 
-http.listen(5000, function() {
-	console.log('Listening on *:8080')
-})
+app.listen(app.get('port'), function() {
+  console.log('Node app is running.');
+});
