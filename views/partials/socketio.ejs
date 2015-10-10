@@ -4,13 +4,15 @@
     <script>
       var socket = io();
 
+      var channel = '<%= channel %>'
+
       $('form').submit(function(){
-        socket.emit('chat-message', $('#message').val());
+        socket.emit('msg-to-server', '#' + channel + ' ' + $('#message').val());
         $('#message').val('');
         return false;
       });
 
-      socket.on('chat-message', function(msg){
+      socket.on('msg-' + channel, function(msg){
         $('#chatbox').append($('<div class="message">').text(msg));
       });
 
