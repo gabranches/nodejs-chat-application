@@ -5,28 +5,12 @@
   </head>
   <body>
 
-    <ul id="chatbox"></ul>
-    <form action="">
+    <div id="chatbox"></div>
+    <form>
       <input id="message" autocomplete="off" /><button>Send</button>
     </form>
 
-    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-    <script src="http://code.jquery.com/jquery-1.11.1.js"></script> 
-
-    <script>
-      var socket = io();
-
-      $('form').submit(function(){
-        socket.emit('chat message', $('#message').val());
-        $('#message').val('');
-        return false;
-      });
-
-      socket.on('chat message', function(msg){
-        $('#chatbox').append($('<li>').text(msg));
-      });
-
-    </script>
+    <% include ../partials/socketio.ejs %>
 
   </body>
 </html>
