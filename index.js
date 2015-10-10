@@ -2,7 +2,7 @@ var express = require('express')
   , http = require('http');
 
 var app = express();
-var server = app.listen(5000);
+var server = app.listen(process.env.PORT || 5000);
 var io = require('socket.io').listen(server);
 
 
