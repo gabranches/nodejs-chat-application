@@ -9,17 +9,16 @@ app.use(express.static(__dirname + '/static'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
+
 app.get('/', function(request, response) {
 	response.render('pages/index')
 })
-
 
 app.get('/:channel', function(request, response) {
 	channel = request.param('channel')
 	console.log('User connected to #' + channel)
 	response.render('pages/index', {channel: channel})
 })
-
 
 io.on('connection', function(socket){
   socket.on('msg-to-server', function(fullMsg){
