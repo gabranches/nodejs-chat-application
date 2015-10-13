@@ -11,8 +11,9 @@ app.set('view engine', 'ejs')
 
 app.get('/:channel', function(request, response) {
 	var channel = request.params.channel
-	logRequest(request);
-	response.render('pages/chatroom', {
+	logRequest(request)
+
+	response.render('pages/index', {
 		locals: {
 			channel: channel
 		}
@@ -20,7 +21,7 @@ app.get('/:channel', function(request, response) {
 })
 
 app.get('/', function(request, response) {
-	logRequest(request);
+	logRequest(request)
 	response.render('pages/index', {
 		locals: {
 			channel: 'index'
@@ -29,12 +30,13 @@ app.get('/', function(request, response) {
 })
 
 io.on('connection', function(socket){
-  socket.on('msg-to-server', function(fullMsg){
-  	console.log(fullMsg)
-  	var ch = getChannel(fullMsg)
-  	var msg = getMessage(fullMsg)
-    io.emit('msg-' + ch, msg)
-  })
+	console.log('io connection')
+	socket.on('msg-to-server', function(fullMsg){
+  		console.log(fullMsg)
+  		var ch = getChannel(fullMsg)
+  		var msg = getMessage(fullMsg)
+    	io.emit('msg-' + ch, msg)
+  	})
 })
 
 app.listen(app.get('port'), function() {
