@@ -3,7 +3,7 @@
 
     <script>
       var socket = io();
-      var channel = '<%= channel %>'
+      var channel = '<%= locals.channel %>'
 
       $('form').submit(function(){
         socket.emit('msg-to-server', '#' + channel + ' ' + $('#message').val());

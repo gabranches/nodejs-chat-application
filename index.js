@@ -1,23 +1,31 @@
 var express = require('express')
-  , http = require('http');
 
-var app = express();
-var server = app.listen(process.env.PORT || 5000);
-var io = require('socket.io').listen(server);
+var app = express()
+var server = app.listen(process.env.PORT || 5000)
+var io = require('socket.io').listen(server)
 
-app.use(express.static(__dirname + '/static'));
-app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/static'))
+app.set('views', __dirname + '/views')
+app.set('view engine', 'ejs')
 
-
-app.get('/', function(request, response) {
-	response.render('pages/index')
-})
 
 app.get('/:channel', function(request, response) {
-	channel = request.param('channel')
-	console.log('User connected to #' + channel)
-	response.render('pages/index', {channel: channel})
+	var channel = request.params.channel
+	logRequest(request);
+	response.render('pages/chatroom', {
+		locals: {
+			channel: channel
+		}
+	})
+})
+
+app.get('/', function(request, response) {
+	logRequest(request);
+	response.render('pages/index', {
+		locals: {
+			channel: 'index'
+		}
+	})
 })
 
 io.on('connection', function(socket){
@@ -30,9 +38,14 @@ io.on('connection', function(socket){
 })
 
 app.listen(app.get('port'), function() {
-  console.log('Node app is running.');
+  console.log('Node app is running.')
 });
 
+
+function logRequest(request) {
+	if (request.url !== "/favicon.ico")
+		console.log('GET Request: ' + request.url)
+}
 
 function getChannel(msg) {
 	var match = /#(\S*)\s/g.exec(msg)
