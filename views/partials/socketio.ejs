@@ -1,28 +1,63 @@
 <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-    <script src="http://code.jquery.com/jquery-1.11.1.js"></script> 
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script> 
 
-    <script>
-      var client = {};
-      client.room = '<%= locals.room %>';
-      var socket = io();
+<script>
+  var windowFocus
+  var client = {}
+  client.room = '<%= locals.room %>'
+  var socket = io()
+  var timer
+  var timerON = false
 
-      socket.on('connect', function () { 
-        socket.emit('info', client);
-      });
+  socket.on('connect', function () { 
+    socket.emit('info', client)
+    resize()
+  });
 
-      $('form').submit(function(){
-        socket.emit('msg-to-server', '#' + client.room + ' ' + $('#message').val());
-        $('#message').val('');
-        return false;
-      });
+  $('form').submit(function(){
+    socket.emit('msg-to-server', '#' + client.room + ' ' + $('#message').val())
+    $('#message').val('')
+    return false
+  });
 
-      socket.on('msg-to-room:' + client.room, function(msg){
-        $('#chatbox').append($('<div class="message">').text('Anonymous: ' + msg));
-        $("#chatbox").prop({ scrollTop: $("#chatbox").prop("scrollHeight") });
-      });
+  socket.on('msg-to-room:' + client.room, function(msg){
+    $('#chatbox').append($('<div class="message">').text('Anonymous: ' + msg))
+    $("#chatbox").prop({ scrollTop: $("#chatbox").prop("scrollHeight") })
+    flashTitle()
+  });
 
-      socket.on('room-status:'  + client.room, function(data){
-        $('#active-users').html('Active Users: ' + data.users.length);
-      });
+  socket.on('room-status:'  + client.room, function(data){
+    $('#active-users').html('Active Users: ' + data.users.length)
+  });
 
-    </script>
+  function flashTitle() {
+    
+    if (document.hasFocus()){
+      document.title = '<%= locals.title %>'
+      clearInterval(timer)
+      timerOn = false
+    } else {
+      if (timerOn == false) {
+        timer = setInterval(function(){ 
+          document.title = document.title == '<%= locals.title %>' ? 'New Message!' : '<%= locals.title %>'
+        }, 1000);
+        timerOn = true
+      }
+    }
+  }
+
+  function resize() {
+    var height = $(window).height();
+    $('#chatbox').css('height', height - 130 + 'px');
+  }
+ 
+  $(window).focus(function () {
+    flashTitle()
+  })
+
+  $(window).resize(function() {
+  resize();
+});
+
+
+</script>

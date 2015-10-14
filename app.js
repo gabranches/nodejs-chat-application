@@ -60,7 +60,7 @@ io.on('connection', function(socket){
   		var room = getroom(fullMsg)
   		var msg = getMessage(fullMsg)
   		// Send message to room
-    	socket.emit('msg-to-room:' + room, msg)
+    	io.emit('msg-to-room:' + room, msg)
     	
   	})
 

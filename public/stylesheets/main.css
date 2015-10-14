@@ -1,6 +1,6 @@
 
 #chatbox {
-	margin-top: 60px;
+	margin-top: 41px;
 	padding: 0 30px;
 	overflow: auto;
 	height: 200px;
@@ -19,4 +19,8 @@
 	position: absolute;
 	bottom: 20px;
 	width: 100%;
+}
+
+.spacer {
+	height:20px;
 }
