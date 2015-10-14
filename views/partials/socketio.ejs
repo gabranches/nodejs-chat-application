@@ -2,16 +2,21 @@
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script> 
 
     <script>
+      var client = {};
       var socket = io();
-      var channel = '<%= locals.channel %>'
+      client.room = '<%= locals.room %>'
+
+      $( document ).ready(function() {
+          socket.emit('info', client)
+      });
 
       $('form').submit(function(){
-        socket.emit('msg-to-server', '#' + channel + ' ' + $('#message').val());
+        socket.emit('msg-to-server', '#' + client.room + ' ' + $('#message').val());
         $('#message').val('');
         return false;
       });
 
-      socket.on('msg-' + channel, function(msg){
+      socket.on('msg-to-room:' + client.room, function(msg){
         $('#chatbox').append($('<div class="message">').text(msg));
       });
 
