@@ -11,19 +11,24 @@
 
   socket.on('connect', function () { 
     socket.emit('info', client)
+    client.socket = socket.io.engine.id
     resize()
+    timerON = false
   });
 
   $('form').submit(function(){
     socket.emit('msg-to-server', '#' + client.room + ' ' + $('#message').val())
+    $('#chatbox').append($('<div class="own message">').text('Anonymous: ' + $('#message').val()))
     $('#message').val('')
     return false
   });
 
-  socket.on('msg-to-room:' + client.room, function(msg){
-    $('#chatbox').append($('<div class="message">').text('Anonymous: ' + msg))
-    $("#chatbox").prop({ scrollTop: $("#chatbox").prop("scrollHeight") })
-    flashTitle()
+  socket.on('msg-to-room:' + client.room, function(data){
+    if (data[0] !== client.socket) {
+      $('#chatbox').append($('<div class="message">').text('Anonymous: ' + data[1]))
+      $("#chatbox").prop({ scrollTop: $("#chatbox").prop("scrollHeight") })
+      flashTitle()
+    }
   });
 
   socket.on('room-status:'  + client.room, function(data){
@@ -53,11 +58,19 @@
  
   $(window).focus(function () {
     flashTitle()
+    clearInterval(timer)
+    timerOn = false
+  })
+
+  $(document).on('focus', function () {
+    flashTitle()
+    clearInterval(timer)
+    timerOn = false
   })
 
   $(window).resize(function() {
-  resize();
-});
+    resize();
+  });
 
 
 </script>

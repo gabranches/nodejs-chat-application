@@ -57,10 +57,11 @@ io.on('connection', function(socket){
 	// Receive incoming messages
 	socket.on('msg-to-server', function(fullMsg) {
   		log(sock + ' ' + fullMsg)
-  		var room = getroom(fullMsg)
+  		var data;
+        var room = getroom(fullMsg)
   		var msg = getMessage(fullMsg)
   		// Send message to room
-    	io.emit('msg-to-room:' + room, msg)
+    	io.emit('msg-to-room:' + room, [socket.id, msg])
     	
   	})
 
