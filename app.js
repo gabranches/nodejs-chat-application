@@ -50,7 +50,9 @@ io.on('connection', function(socket){
 
 	// Receive info from client on connection
 	socket.on('info', function(data) {
-		addUser(data.room, sock)
+        if (data.refresh == 0){
+    		addUser(data.room, sock)
+        }
 		socket.emit('room-status:' + data.room, rooms[data.room])
 	})
 
