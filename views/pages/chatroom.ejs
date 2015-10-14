@@ -31,6 +31,17 @@
       </div>    
     </div>   
     
+    <script>
+      var client = {}
+      client.room = '<%= locals.room %>'
+
+      var timerOn = false
+      var timer
+
+      $(document).ready(function() {
+          resize()
+      })
+    </script>
 
     <% include ../partials/socketio.ejs %>
   </body>
