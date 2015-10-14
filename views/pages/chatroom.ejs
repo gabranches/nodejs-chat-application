@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <% include ../partials/header.ejs %>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row" id="status-bar">
+        <div class="col-xs-4 col-md-2">
+          Room: <%= locals.room %>
+        </div>
+        <div class="col-xs-4 col-md-2" id="active-users">
+        </div>
+        <div class="col-xs-4 col-md-8"></div>
+      </div>
+
+      <div class="row">
+        <div class='col-xs-12' id="chatbox"></div>
+      </div>
+      
+      <div class="row" id="footer">
+        <form>
+          <div class='col-xs-9 col-sm-10 col-md-11'>
+            <input class="form-control" id="message" autocomplete="off" placeholder="Type a message and press enter to send" />
+          </div>
+          <div class="col-xs-3 col-sm-2 col-md-1">
+            <button class='btn btn-primary'>Send</button>
+          </div>
+        </form>
+      </div>    
+    </div>   
+    
+
+    <% include ../partials/socketio.ejs %>
+  </body>
+</html>

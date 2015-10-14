@@ -3,11 +3,11 @@
 
     <script>
       var client = {};
+      client.room = '<%= locals.room %>';
       var socket = io();
-      client.room = '<%= locals.room %>'
 
-      $( document ).ready(function() {
-          socket.emit('info', client)
+      socket.on('connect', function () { 
+        socket.emit('info', client);
       });
 
       $('form').submit(function(){
@@ -17,7 +17,12 @@
       });
 
       socket.on('msg-to-room:' + client.room, function(msg){
-        $('#chatbox').append($('<div class="message">').text(msg));
+        $('#chatbox').append($('<div class="message">').text('Anonymous: ' + msg));
+        $("#chatbox").prop({ scrollTop: $("#chatbox").prop("scrollHeight") });
+      });
+
+      socket.on('room-status:'  + client.room, function(data){
+        $('#active-users').html('Active Users: ' + data.users.length);
       });
 
     </script>
