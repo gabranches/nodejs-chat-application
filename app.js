@@ -22,7 +22,7 @@ app.get('/api/sockets', function(request, response) {
 })
 
 app.get('/:room', function(request, response) {
-	var room = request.params.room
+	var room = request.params.room.toLowerCase()
 	// Render room page
 	response.render('pages/chatroom', {
 		locals: {
