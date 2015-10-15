@@ -6,44 +6,31 @@
   var socket = io()
   
   socket.on('connect', function () { 
+    // Send client info to server
     socket.emit('info', client)
     client.socket = socket.io.engine.id
   });
 
   $('form').submit(function(){
+    // Send message to server
     socket.emit('msg-to-server', '#' + client.room + ' ' + $('#message').val())
-    $('#chatbox').append($('<div class="own message">').text('Anonymous: ' + $('#message').val()))
+    printMessage($('#message').val(), true)
     $('#message').val('')
     return false
   });
 
+  // Receive message from server
   socket.on('msg-to-room:' + client.room, function(data){
     if (data[0] !== client.socket) {
-      $('#chatbox').append($('<div class="message">').text('Anonymous: ' + data[1]))
-      $("#chatbox").prop({ scrollTop: $("#chatbox").prop("scrollHeight") })
-      flashTitle()
+      printMessage(data[1], false)
+      flashTitle(client.room)
     }
   });
 
+  // Update room status info
   socket.on('room-status:'  + client.room, function(data){
     client.refresh = 1
     $('#active-users').html('Active Users: ' + data.users.length)
   });
-
-  function flashTitle() {
-    
-    if (document.hasFocus()){
-      document.title = '<%= locals.title %>'
-      clearInterval(timer)
-      timerOn = false
-    } else {
-      if (timerOn == false) {
-        timer = setInterval(function(){ 
-          document.title = document.title == '<%= locals.title %>' ? 'New Message!' : '<%= locals.title %>'
-        }, 1000);
-        timerOn = true
-      }
-    }
-  }
 
 </script>
