@@ -1,9 +1,9 @@
 function printMessage(msg, own) {
     // Print message to chat box
     if (own) {
-        $('#chatbox').append($('<div class="own message">').text('Anonymous: ' + msg))
+        $('#chatbox').append($('<div class="own message"><span class="author">Anonymous</span>: ' + msg + '</div>'))
     } else {
-        $('#chatbox').append($('<div class="message">').text('Anonymous: ' + msg))
+        $('#chatbox').append($('<div class="message"><span class="author">Anonymous</span>: ' + msg + '</div>'))
     }
     $("#chatbox").prop({ scrollTop: $("#chatbox").prop("scrollHeight") })
 }

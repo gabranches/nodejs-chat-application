@@ -28,3 +28,7 @@
 .own {
 	color: #0000EC;
 }
+
+.author {
+	text-decoration: bold;
+}
