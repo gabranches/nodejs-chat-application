@@ -32,3 +32,8 @@
 .author {
 	font-weight: bold;
 }
+
+.admin {
+	font-weight: bold;
+	color: red;
+}

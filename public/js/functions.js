@@ -1,9 +1,14 @@
-function printMessage(msg, own) {
+function printMessage(data) {
     // Print message to chat box
-    if (own) {
-        $('#chatbox').append($('<div class="own message"><span class="author">Anonymous</span>: ' + msg + '</div>'))
+    if (data.sender === client.socketID) {
+        // If own message
+        $('#chatbox').append($('<div class="own message"><span class="author">Anonymous</span>: ' + data.msg + '</div>'))
+    } else if (data.sender === 'admin') {
+        // If admin message
+        $('#chatbox').append($('<div class="message"><span class="admin">' + data.msg + '</span></div>'))
     } else {
-        $('#chatbox').append($('<div class="message"><span class="author">Anonymous</span>: ' + msg + '</div>'))
+        // Regular message
+        $('#chatbox').append($('<div class="message"><span class="author">Anonymous</span>: ' + data.msg + '</div>'))
     }
     $("#chatbox").prop({ scrollTop: $("#chatbox").prop("scrollHeight") })
 }
@@ -49,6 +54,7 @@ $(window).resize(function() {
 window.setInterval( function () {
     // Update room info every 10 seconds
     if (client) {
-        socket.emit('info', client)
+        socket.emit('update-request', client)
+        console.log('Sent update request.')
     }
 }, 10000);

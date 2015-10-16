@@ -7,30 +7,31 @@
   
   socket.on('connect', function () { 
     // Send client info to server
-    socket.emit('info', client)
-    client.socket = socket.io.engine.id
+    socket.emit('user-connect', client)
+    client.socketID = socket.io.engine.id
   });
 
   $('form').submit(function(){
     // Send message to server
-    socket.emit('msg-to-server', '#' + client.room + ' ' + $('#message').val())
-    printMessage($('#message').val(), true)
+    client.msg = $('#message').val()
+    socket.emit('msg-to-server', client)
+    printMessage({sender: client.socketID, msg: client.msg})
     $('#message').val('')
     return false
   });
 
   // Receive message from server
-  socket.on('msg-to-room:' + client.room, function(data){
-    if (data[0] !== client.socket) {
-      printMessage(data[1], false)
+  socket.on('msg-to-room', function(data){
+    if (data.sender !== client.socketID) {
+      printMessage(data)
       flashTitle(client.room)
     }
   });
 
   // Update room status info
-  socket.on('room-status:'  + client.room, function(data){
-    client.refresh = 1
-    $('#active-users').html('Active Users: ' + data.users.length)
+  socket.on('room-status', function(data){
+    console.log('Received room info.')
+    $('#active-users').html('Active Users: ' + data.msg.users)
   });
 
 </script>

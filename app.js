@@ -8,12 +8,9 @@ app.set('views', __dirname + '/views')
 app.set('view engine', 'ejs')
 
 
-var sockets = {}
-var rooms = {}
-
 // Routes
 
-app.get('/api/rooms', function(request, response) {
+app.get('/api/room', function(request, response) {
 	response.json(rooms)
 })
 
@@ -44,84 +41,63 @@ app.get('/', function(request, response) {
 // IO
 
 io.on('connection', function(socket){
-	var sock = socket.id
 	var userIP = socket.request.connection.remoteAddress
-	log('user ' + sock + ' (' + userIP + ') connected')
+	logEvent('user ' + socket.id + ' (' + userIP + ') connected')
 
-	// Receive info from client on connection
-	socket.on('info', function(data) {
-        if (data.refresh == 0){
-    		addUser(data.room, sock)
-        }
-		socket.emit('room-status:' + data.room, rooms[data.room])
+	// Receive info from client on connection, add user to room
+	socket.on('user-connect', function(data) {
+		this.join(data.room)
+		sendMessage('msg-to-room', 'admin', this.id, 'You have joined ' + data.room + '.')
+		sendStatus(data.room)
 	})
 
 	// Receive incoming messages
-	socket.on('msg-to-server', function(fullMsg) {
-  		log(sock + ' ' + fullMsg)
-  		var data;
-        var room = getroom(fullMsg)
-  		var msg = getMessage(fullMsg)
+	socket.on('msg-to-server', function(client) {
+  		logEvent(client.socketID + ' ' + client.msg)
   		// Send message to room
-    	io.emit('msg-to-room:' + room, [socket.id, msg])
-    	
+  		sendMessage('msg-to-room', client.socketID, client.room, client.msg)
   	})
 
 	// Send an update to the room with the room status
-  	socket.on('update-request', function() {
-  		socket.emit('room-status:' + data.room, rooms[data.room])
+  	socket.on('update-request', function(data) {
+  		sendStatus(data.room)
   	})
 
   	socket.on('disconnect', function() {
-  		log('user ' + sock + ' (' + userIP + ') disconnected')
-  		// Remove user from room
-  		removeUser(sock)
+  		logEvent('user ' + socket.id + ' (' + userIP + ') disconnected')
   	})
 })
 
 // Functions
 
-function addUser(room, sock) {
-	// Adds user to sockets array
-	sockets[sock] = room
-	// Adds user to a room
-	log('user ' + sock + ' joined #' + room)
-	if (room in rooms) {
-		rooms[room].users.push(sock)
-	} else {
-		// Create room if it doesn't exist
-		rooms[room] = ({users: [sock]})
+function getUsers(room) {
+	// Returns an array of users in the specified room
+	return Object.keys(io.sockets.adapter.rooms[room])
+}
+
+function sendStatus(room) {
+	// Sends the current status to a room
+	var status = {
+		users: getUsers(room).length
 	}
+	sendMessage('room-status', 'server', room, status)
+
 }
 
-function removeUser(sock) {
-	// Remove user from socket array and get room
-	var room = sockets[sock]
-	delete sockets[sock]
-	// Remove user from rooms
-	if (room in rooms) {
-		var index = rooms[room].users.indexOf(sock)
-		if (index > -1) {
-			rooms[room].users.splice(index, 1)
-		}
+function sendMessage(channel, sender, recipient, msg) {
+	var data = {
+		sender: sender,
+		msg: msg
 	}
+	io.to(recipient).emit(channel, data)
 }
 
-function getroom(msg) {
-	var match = /#(\S*)\s/g.exec(msg)
-	return match[1]
-}
 
-function getMessage(msg) {
-	var match = /#\S*\s(.*)/g.exec(msg)
-	return match[1]
-}
-
-function log(msg) {
+function logEvent(msg) {
 	var now = new Date()
 	console.log('(' + now.toISOString() + ') ' + msg)
 }
 
 app.listen(app.get('port'), function() {
-  log('Node app is running.')
+  logEvent('Node app is running.')
 });
