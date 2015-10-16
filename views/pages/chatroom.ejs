@@ -32,16 +32,16 @@
     </div>   
     
     <script>
-      var client = {}
-      client.room = '<%= locals.room %>'
-      client.refresh = 0
-      var timerOn = false
-      var timer
-      var recentMessages = []
+      var client = {};
+      client.room = '<%= locals.room %>';
+      client.refresh = 0;
+      var timerOn = false;
+      var timer;
+      var recentMessages = [];
 
       $(document).ready(function() {
-          resize()
-      })
+          resize();
+      });
     </script>
     <% include ../partials/socketio.ejs %>
   </body>
