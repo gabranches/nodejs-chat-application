@@ -9,11 +9,17 @@ app.use(express.static(__dirname + '/public'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
+
 // Routes
 
-// app.get('/api/room', function (request, response) {
-//     response.json(rooms)
-// })
+app.get('/api/room/:room?', function (request, response) {
+    if (request.params.room){
+        var room = request.params.room.toLowerCase();
+        response.json(io.sockets.adapter.rooms[room]);
+    } else {
+        response.json(chat.findRooms());
+    }
+});
 
 // app.get('/api/sockets', function (request, response) {
 //     response.json(sockets)
