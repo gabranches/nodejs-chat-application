@@ -7,7 +7,6 @@ app.use(express.static(__dirname + '/public'))
 app.set('views', __dirname + '/views')
 app.set('view engine', 'ejs')
 
-
 // Routes
 
 app.get('/api/room', function(request, response) {
@@ -47,6 +46,7 @@ io.on('connection', function(socket){
 	// Receive info from client on connection, add user to room
 	socket.on('user-connect', function(data) {
 		this.join(data.room)
+		sendMessage('recent-msgs', 'server', this.id, getRecentMessages(data.room))
 		sendMessage('msg-to-room', 'admin', this.id, 'You have joined ' + data.room + '.')
 		sendStatus(data.room)
 	})
@@ -54,6 +54,7 @@ io.on('connection', function(socket){
 	// Receive incoming messages
 	socket.on('msg-to-server', function(client) {
   		logEvent(client.socketID + ' ' + client.msg)
+  		addToRecentMessages(client)
   		// Send message to room
   		sendMessage('msg-to-room', client.socketID, client.room, client.msg)
   	})
@@ -70,13 +71,30 @@ io.on('connection', function(socket){
 
 // Functions
 
+function addToRecentMessages(data) {
+	var arr = io.sockets.adapter.rooms[data.room].recentMessages
+	if (arr !== undefined) {
+		if (arr.length === 10) {
+			arr.splice(0, 1)
+		}
+		arr.push(data)
+	} else {
+		arr = [data]
+	}
+	io.sockets.adapter.rooms[data.room].recentMessages = arr
+}
+
+function getRecentMessages(room) {
+	return io.sockets.adapter.rooms[room].recentMessages
+}
+
+// Returns an array of users in the specified room
 function getUsers(room) {
-	// Returns an array of users in the specified room
 	return Object.keys(io.sockets.adapter.rooms[room])
 }
 
+// Sends the current status to a room
 function sendStatus(room) {
-	// Sends the current status to a room
 	var status = {
 		users: getUsers(room).length
 	}

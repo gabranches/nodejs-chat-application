@@ -3,35 +3,45 @@
 
 <script>
   
-  var socket = io()
-  
-  socket.on('connect', function () { 
-    // Send client info to server
+var socket = io()
+
+// Send client info to server
+socket.on('connect', function () { 
     socket.emit('user-connect', client)
     client.socketID = socket.io.engine.id
-  });
+});
 
-  $('form').submit(function(){
-    // Send message to server
+// Send message to server
+$('form').submit(function(){
     client.msg = $('#message').val()
     socket.emit('msg-to-server', client)
     printMessage({sender: client.socketID, msg: client.msg})
     $('#message').val('')
     return false
-  });
+});
 
-  // Receive message from server
-  socket.on('msg-to-room', function(data){
+// Receive message from server
+socket.on('msg-to-room', function(data){
     if (data.sender !== client.socketID) {
-      printMessage(data)
-      flashTitle(client.room)
+        printMessage(data)
+        flashTitle(client.room)
     }
-  });
+});
 
-  // Update room status info
-  socket.on('room-status', function(data){
+// Update room status info 
+socket.on('room-status', function(data){
     console.log('Received room info.')
     $('#active-users').html('Active Users: ' + data.msg.users)
-  });
+});
+
+// Print recent messages
+socket.on('recent-msgs', function(msgArray){
+    console.log('Received recent messages.')
+    if (msgArray.msg !== undefined) {
+        msgArray.msg.forEach(function (data){
+            printMessage(data)
+        })
+    }
+});
 
 </script>
