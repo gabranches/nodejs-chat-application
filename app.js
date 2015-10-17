@@ -22,10 +22,6 @@ app.get('/api/room/:room?', function (request, response) {
     }
 });
 
-// app.get('/api/sockets', function (request, response) {
-//     response.json(sockets)
-// })
-
 app.get('/:room', function (request, response) {
     var room = request.params.room.toLowerCase();
     // Render room page
