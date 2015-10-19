@@ -6,14 +6,16 @@ var bodyParser = require('body-parser');
 var server = app.listen(process.env.PORT || 5000);
 var io = require('socket.io').listen(server);
 var chat = require('./lib/chat.js')(io);
-var session = require('express-session');
+var session = require('cookie-session');
 
+
+app.set('trust proxy', 1) // trust first proxy
 
 app.use(session({
-    secret: "cookie_secret",
-    resave: true,
-    saveUninitialized: true
-}));
+  name: 'session',
+  keys: ['key1', 'key2']
+}))
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
@@ -34,12 +36,12 @@ app.get('/api/room/:room?', function (request, response) {
 });
 
 app.get('/api/sessions', function (request, response) {
-    response.json(session);
+    response.json(request.session);
 });
 
 app.get('/:room', function (request, response) {
     var room = request.params.room.toLowerCase();
-    var nick = session.nick ? session.nick : '';
+    var nick = request.session.nick ? request.session.nick : '';
    
     // Render room page
     response.render('pages/chatroom', {
@@ -54,14 +56,13 @@ app.get('/:room', function (request, response) {
 app.post('/:room', function (request, response) {
     var room = request.body.room;
     var nick = request.body.nick;
-    session.nick = nick;
+    request.session.nick = nick;
     // Render room page
     response.render('pages/chatroom', {
         locals: {
             room: room,
             nick: nick,
-            title: room,
-            sessionID: request.session.sessionID
+            title: room
         }
     });
 });
