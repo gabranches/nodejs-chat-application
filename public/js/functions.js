@@ -1,14 +1,20 @@
+function submitForm() {
+    var form = $("#front-page-form");
+    form.attr("action", "/" + $("#room").val().trim());
+    form.submit();
+}
+
 function printMessage(data) {
     // Print message to chat box
     if (data.sender === client.socketID) {
         // If own message
-        $('#chatbox').append($('<div class="own message"><span class="author">Anonymous</span>: ' + data.msg + '</div>'));
+        $('#chatbox').append($('<div class="own message"><span class="author">' + data.nick + '</span>: ' + data.msg + '</div>'));
     } else if (data.sender === 'admin') {
         // If admin message
         $('#chatbox').append($('<div class="message"><span class="admin">' + data.msg + '</span></div>'));
     } else {
         // Regular message
-        $('#chatbox').append($('<div class="message"><span class="author">Anonymous</span>: ' + data.msg + '</div>'));
+        $('#chatbox').append($('<div class="message"><span class="author">' + data.nick + '</span>: ' + data.msg + '</div>'));
     }
     $("#chatbox").prop({ scrollTop: $("#chatbox").prop("scrollHeight") });
 }
@@ -35,26 +41,3 @@ function resize() {
     $('#chatbox').css('height', height - 130 + 'px');
 }
 
-$(window).focus(function () {
-    flashTitle(client.room);
-    clearInterval(timer);
-    timerOn = false;
-});
-
-$(document).on('focus', function () {
-    flashTitle(client.room);
-    clearInterval(timer);
-    timerOn = false;
-});
-
-$(window).resize(function() {
-    resize();
-});
-
-window.setInterval( function () {
-    // Update room info every 10 seconds
-    if (client) {
-        socket.emit('update-request', client);
-        console.log('Sent update request.');
-    }
-}, 10000);

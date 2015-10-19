@@ -7,12 +7,13 @@
     <div class="container-fluid">
       <div class="spacer"></div>
       <div class="row" id="status-bar">
-        <div class="col-xs-6 col-md-2">
+        <div id="status-nick" class="status-div">
+        </div>
+        <div class="status-div">
           Room: <%= locals.room %>
         </div>
-        <div class="col-xs-6 col-md-2" id="active-users">
+        <div class="status-div" id="active-users">
         </div>
-        <div class="col-xs-0 col-md-8"></div>
       </div>
 
       <div class="row">
@@ -33,15 +34,44 @@
     
     <script>
       var client = {};
+      var nick = '<%= locals.nick %>';
       client.room = '<%= locals.room %>';
+      client.nick = nick === "" ? "Anonymous" : nick;
       client.refresh = 0;
+      client.sessionID = '<%= locals.sessionID %>'
       var timerOn = false;
       var timer;
       var recentMessages = [];
 
       $(document).ready(function() {
           resize();
+          $("#status-nick").text(client.nick);
       });
+
+      window.setInterval( function () {
+          // Update room info every 10 seconds
+          if (client) {
+              socket.emit('update-request', client);
+              console.log('Sent update request.');
+          }
+      }, 10000);
+
+      $(window).focus(function () {
+          flashTitle(client.room);
+          clearInterval(timer);
+          timerOn = false;
+      });
+
+      $(document).on('focus', function () {
+          flashTitle(client.room);
+          clearInterval(timer);
+          timerOn = false;
+      });
+
+      $(window).resize(function() {
+          resize();
+      });
+
     </script>
     <% include ../partials/socketio.ejs %>
   </body>

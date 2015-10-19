@@ -41,3 +41,12 @@
 .btn-primary {
 	width: 100%;
 }
+
+.status-div {
+	display: inline-block;
+	margin: 0 20px;
+}
+
+#status-nick {
+	font-weight: bold;
+}

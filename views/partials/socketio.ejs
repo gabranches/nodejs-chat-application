@@ -14,7 +14,7 @@ socket.on('connect', function () {
 $('form').submit(function(){
     client.msg = $('#message').val();
     socket.emit('msg-to-server', client);
-    printMessage({sender: client.socketID, msg: client.msg});
+    printMessage({sender: client.socketID, msg: client.msg, nick: client.nick});
     $('#message').val('');
     return false;
 });
