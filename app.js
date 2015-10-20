@@ -8,6 +8,7 @@ var io = require('socket.io').listen(server);
 var roomList = {};
 var chat = require('./lib/chat.js')(io, roomList);
 
+
 // Session variables
 
 var expressSession = require('express-session');
