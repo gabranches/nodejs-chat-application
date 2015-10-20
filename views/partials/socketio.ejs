@@ -19,6 +19,18 @@ $('form').submit(function(){
     return false;
 });
 
+$(".glyphicon-pencil").click(function() {
+    $.ajax({
+      url: 'ajax/changename',
+      type: 'POST',
+      data: {nick: client.nick},
+    }).done(function() {
+        alert('sucess');
+    }).fail(function() {
+        alert('fail');
+    });
+});
+
 // Receive message from server
 socket.on('msg-to-room', function(data){
     if (data.sender !== client.socketID) {
@@ -30,7 +42,7 @@ socket.on('msg-to-room', function(data){
 // Update room status info 
 socket.on('room-status', function(data){
     console.log('Received room info.');
-    $('#active-users').html('Active Users: ' + data.msg.users);
+    $('#active-users').html('<span class="glyphicon glyphicon-user"></span> ' + data.msg.users);
 });
 
 // Print recent messages

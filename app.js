@@ -1,37 +1,42 @@
-"use strict";
+// Globals
+
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-// var RedisStore = require('connect-redis')(session);
 var server = app.listen(process.env.PORT || 5000);
 var io = require('socket.io').listen(server);
-var chat = require('./lib/chat.js')(io);
-var session = require('cookie-session');
+var roomList = {};
+var chat = require('./lib/chat.js')(io, roomList);
+
+// Session variables
+
+var expressSession = require('express-session');
+var session = expressSession({
+    secret: "cookie_secret",
+    cookie: { maxAge: (60000 * 24 * 30)},
+    resave: true,
+    saveUninitialized: true
+});
+
+app.use(session);
 
 
-app.set('trust proxy', 1) // trust first proxy
-
-app.use(session({
-  name: 'session',
-  keys: ['key1', 'key2']
-}))
-
+// App Config
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
-var recentMessages = [];
 
 // Routes
 
 app.get('/api/room/:room?', function (request, response) {
     if (request.params.room){
         var room = request.params.room.toLowerCase();
-        response.json(io.sockets.adapter.rooms[room]);
+        response.json(roomList[room]);
     } else {
-        response.json(chat.findRooms());
+        response.json(roomList);
     }
 });
 
@@ -39,10 +44,19 @@ app.get('/api/sessions', function (request, response) {
     response.json(request.session);
 });
 
+app.post('/ajax/changename', function (request, response) {
+    var nick = request.body.nick;
+    request.session.nick = nick;
+
+    response.send({result: 'Name changed successfully.'});
+    response.send({result: 'This name is already taken. Please choose another name.'});
+
+});
+
 app.get('/:room', function (request, response) {
     var room = request.params.room.toLowerCase();
     var nick = request.session.nick ? request.session.nick : '';
-   
+    debugger;
     // Render room page
     response.render('pages/chatroom', {
         locals: {
@@ -81,4 +95,4 @@ app.listen(app.get('port'), function () {
 });
 
 
-require('./lib/io.js')(io, chat, recentMessages, session)
+require('./lib/io.js')(io, chat, roomList)

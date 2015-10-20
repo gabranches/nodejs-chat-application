@@ -49,4 +49,13 @@
 
 #status-nick {
 	font-weight: bold;
+	margin-right: 3px;
+}
+
+.glyphicon {
+	font-size: 12px;
+}
+
+.glyphicon-pencil {
+	cursor: pointer;
 }

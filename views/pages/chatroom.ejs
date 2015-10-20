@@ -7,11 +7,11 @@
     <div class="container-fluid">
       <div class="spacer"></div>
       <div class="row" id="status-bar">
-        <div id="status-nick" class="status-div">
-        </div>
         <div class="status-div">
-          Room: <%= locals.room %>
+        <span id="status-nick"></span>
+        <icon class="glyphicon glyphicon-pencil" title="Change Name"></icon>
         </div>
+
         <div class="status-div" id="active-users">
         </div>
       </div>
@@ -45,7 +45,7 @@
 
       $(document).ready(function() {
           resize();
-          $("#status-nick").text(client.nick);
+          $("#status-nick").html(client.nick);
       });
 
       window.setInterval( function () {
