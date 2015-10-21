@@ -50,20 +50,29 @@ app.post('/ajax/changename', function (request, response) {
 
     var client = request.body;
 
+    // Check if name is taken
     if (chat.checkIfNameIsTaken(client.room, client.newname)) {
         chat.logEvent('Name taken');
         response.send({result: 'Fail'});
     } else {
+        // Assign new name to session
+        request.session.nick = client.newname;
+        // Change user nick in roomList
+        chat.changeName(client.room, client.nick, client.newname);
+
         chat.logEvent('Name available');
         response.send({result: 'Success'});
+        chat.sendMessage('msg-to-room', 'server', 'Admin', client.room, '<span class="admin-name">' + 
+                         client.nick + '</span> is now known as <span class="admin-name">' + 
+                         client.newname + '</span>.')
     }
 
 });
 
 app.get('/:room', function (request, response) {
-    var room = request.params.room.toLowerCase();
-    var nick = request.session.nick ? request.session.nick : '';
-    debugger;
+    var room = request.params.room.toLowerCase().split(' ').join('');
+    var nick = request.session.nick ? request.session.nick : chat.getGuestNick(room);
+
     // Render room page
     response.render('pages/chatroom', {
         locals: {
@@ -75,9 +84,13 @@ app.get('/:room', function (request, response) {
 });
 
 app.post('/:room', function (request, response) {
-    var room = request.body.room;
+    var room = request.body.room.toLowerCase().split(' ').join('');
     var nick = request.body.nick;
+    if (nick === '') {
+        nick = chat.getGuestNick(room);
+    }
     request.session.nick = nick;
+
     // Render room page
     response.render('pages/chatroom', {
         locals: {

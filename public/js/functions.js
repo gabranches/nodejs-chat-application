@@ -1,3 +1,4 @@
+// Send an AJAX request with the name change
 function changeName() {
   $.ajax({
       url: 'ajax/changename',
@@ -10,10 +11,23 @@ function changeName() {
         socketID: client.socketID
       },
     }).done(function(data) {
-        if(data.result === "Success") {
-          alert('name changed');
+        // AJAX request succeeded
+        $('#change-name-loader').hide();
+        if(data.result === 'Success') {
+          // Name change successful
+          client.nick = client.newname;
+          $('#change-name-form').hide();
+          $('#status-nick').text(client.nick);
+          $('#status-nick').show();
+          $('.glyphicon-pencil').show();
+          $('#change-name-form div:first-child').attr('class', 'form-group has-feedback');
+          $("#change-name-error").hide();
         } else {
-          alert('name taken');
+          // Name change fail (name already taken)
+          $('#change-name-form div:first-child').attr('class', 'form-group has-error has-feedback');
+          $("#change-name-input").val('');
+          $("#change-name-input").attr('placeholder', 'Name already taken.');
+          $("#change-name-error").show();
         }
     }).fail(function() {
         alert('The request failed. Please try again.');
@@ -22,7 +36,7 @@ function changeName() {
 
 function submitForm() {
     var form = $("#front-page-form");
-    form.attr("action", "/" + $("#room").val().trim());
+    form.attr("action", "/" + $("#room").val().toLowerCase().split(' ').join(''));
     form.submit();
 }
 

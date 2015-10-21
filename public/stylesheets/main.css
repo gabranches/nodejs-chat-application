@@ -38,6 +38,10 @@
 }
 
 .admin {
+	color: red;
+}
+
+.admin-name {
 	font-weight: bold;
 	color: red;
 }

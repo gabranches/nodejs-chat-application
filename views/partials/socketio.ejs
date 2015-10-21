@@ -24,15 +24,25 @@ $(".glyphicon-pencil").click(function() {
     $("#status-nick").hide();
     $(this).hide();
     $("#change-name-form").show();
+    $("#change-name-input").focus();
 });
 
 // Send changed name to server
 $('#change-name-form').submit(function(){
-    $("#change-name-button").hide();
-    $("#change-name-loader").show();
-    client.newname = $("#change-name-input").val();
-    changeName();
+    var newname = $("#change-name-input").val().trim();
+    if (newname !== '' && newname.length < 30) {
+        $("#change-name-button").hide();
+        $("#change-name-loader").show();
+        client.newname = newname;
+        changeName();
+    }
     return false;
+});
+
+$('#change-name-input').blur(function(){
+    $('#change-name-form').hide();
+    $('#status-nick').show();
+    $('.glyphicon-pencil').show();
 });
 
 // Receive change name response
