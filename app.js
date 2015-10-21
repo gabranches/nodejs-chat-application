@@ -47,6 +47,7 @@ app.get('/api/room/:room?', function (request, response) {
 /* AJAX: Process a name change ajax request */
 app.post('/ajax/changename', function (request, response) {
     var client = request.body;
+
     // Check if name is taken
     if (chat.checkIfNameIsTaken(client.room, client.newname)) {
         response.send({result: 'Fail'});
@@ -66,8 +67,11 @@ app.post('/ajax/changename', function (request, response) {
 /* AJAX: Check if a name is taken */
 app.post('/ajax/namecheck', function (request, response) {
     var client = request.body;
+    // Return true if the name is stored in the user's session
+    if (client.nick == request.session.nick) {
+        response.send({result: 'Success'});
     // Check if name is taken
-    if (chat.checkIfNameIsTaken(client.room, client.nick)) {
+    } else if (chat.checkIfNameIsTaken(client.room, client.nick)) {
         response.send({result: 'Fail'});
     } else {
         response.send({result: 'Success'});
@@ -76,18 +80,8 @@ app.post('/ajax/namecheck', function (request, response) {
 
 /* Load room page (GET) */
 app.get('/:room', function (request, response) {
-    var room = request.params.room.toLowerCase().split(' ').join('');
-    
-    if (request.session.nick) {
-        // Check if session name is already taken
-        if (chat.checkIfNameIsTaken(room, request.session.nick)) {
-            var nick = chat.getGuestNick(room);
-        } else {
-            var nick = request.session.nick;
-        }
-    } else {
-        var nick = chat.getGuestNick(room);
-    }
+    var room = request.params.room.toLowerCase().split(' ').join('');  
+    var nick = request.session.nick ? request.session.nick : chat.getGuestNick(room);
 
     // Render room page
     response.render('pages/chatroom', {
@@ -103,9 +97,9 @@ app.get('/:room', function (request, response) {
 app.post('/:room', function (request, response) {
     var room = request.body.room.toLowerCase().split(' ').join('');
     var nick = request.body.nick;
+
     // Generate a guest name if there is no session variable
     request.session.nick = nick === '' ? chat.getGuestNick(room) : nick;
-    console.log(request.session.nick);
     response.redirect('/' + room);
 });
 
