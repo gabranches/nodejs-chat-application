@@ -1,0 +1,11 @@
+allow the user to change name from the chat window
+    add an input box to change name after clicking on pencil
+    check if the name is not taken
+        confirm/reject name choice
+        if confirm
+            write new name to session variable
+            show confirmation check mark
+        if reject
+            show rejection X
+            request name again
+

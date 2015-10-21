@@ -14,7 +14,7 @@ socket.on('connect', function () {
 $('form').submit(function(){
     client.msg = $('#message').val();
     socket.emit('msg-to-server', client);
-    printMessage({sender: client.socketID, msg: client.msg, nick: client.nick});
+    printMessage({socketID: client.socketID, msg: client.msg, nick: client.nick});
     $('#message').val('');
     return false;
 });
@@ -33,7 +33,7 @@ $(".glyphicon-pencil").click(function() {
 
 // Receive message from server
 socket.on('msg-to-room', function(data){
-    if (data.sender !== client.socketID) {
+    if (data.socketID !== client.socketID) {
         printMessage(data);
         flashTitle(client.room);
     }

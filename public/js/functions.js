@@ -6,10 +6,10 @@ function submitForm() {
 
 function printMessage(data) {
     // Print message to chat box
-    if (data.sender === client.socketID) {
+    if (data.socketID === client.socketID) {
         // If own message
         $('#chatbox').append($('<div class="own message"><span class="author">' + data.nick + '</span>: ' + data.msg + '</div>'));
-    } else if (data.sender === 'admin') {
+    } else if (data.nick === 'Admin') {
         // If admin message
         $('#chatbox').append($('<div class="message"><span class="admin">' + data.msg + '</span></div>'));
     } else {
