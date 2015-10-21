@@ -1,2 +1,6 @@
 fix up front page
+    check if name is taken
 
+format links in chat messages
+
+handle user disconnects

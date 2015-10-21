@@ -30,8 +30,11 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
 
-// Routes
+/* Routes */
 
+
+/* API: Shows all active rooms in JSON format. 
+        Leave out :room? to get all rooms. */
 app.get('/api/room/:room?', function (request, response) {
     if (request.params.room){
         var room = request.params.room.toLowerCase();
@@ -41,38 +44,29 @@ app.get('/api/room/:room?', function (request, response) {
     }
 });
 
-app.get('/api/sessions', function (request, response) {
-    response.json(request.session);
-});
-
-// Process a name change ajax request
+/* AJAX: Process a name change ajax request */
 app.post('/ajax/changename', function (request, response) {
-
     var client = request.body;
-
     // Check if name is taken
     if (chat.checkIfNameIsTaken(client.room, client.newname)) {
-        chat.logEvent('Name taken');
         response.send({result: 'Fail'});
     } else {
         // Assign new name to session
         request.session.nick = client.newname;
         // Change user nick in roomList
         chat.changeName(client.room, client.nick, client.newname);
-
-        chat.logEvent('Name available');
         response.send({result: 'Success'});
-        chat.sendMessage('msg-to-room', 'server', 'Admin', client.room, '<span class="admin-name">' + 
-                         client.nick + '</span> is now known as <span class="admin-name">' + 
-                         client.newname + '</span>.')
+        chat.sendMessage('msg-to-room', 'server', 'Admin', client.room,
+                         '<span class="admin-name">' + client.nick + 
+                         '</span> is now known as <span class="admin-name">' + 
+                         client.newname + '</span>.');
     }
-
 });
 
+/* Load room page (GET) */
 app.get('/:room', function (request, response) {
     var room = request.params.room.toLowerCase().split(' ').join('');
     var nick = request.session.nick ? request.session.nick : chat.getGuestNick(room);
-
     // Render room page
     response.render('pages/chatroom', {
         locals: {
@@ -83,23 +77,15 @@ app.get('/:room', function (request, response) {
     });
 });
 
+/* Grabs the user nick, assigns to session, then redirects to the room */
 app.post('/:room', function (request, response) {
     var room = request.body.room.toLowerCase().split(' ').join('');
     var nick = request.body.nick;
-    if (nick === '') {
-        nick = chat.getGuestNick(room);
-    }
-    request.session.nick = nick;
-
-    // Render room page
-    response.render('pages/chatroom', {
-        locals: {
-            room: room,
-            nick: nick,
-            title: room
-        }
-    });
+    // Generate a guest name if there is no session variable
+    request.session.nick = nick === '' ? chat.getGuestNick(room) : nick;
+    response.redirect('/' + room);
 });
+
 
 app.get('/', function (request, response) {
     response.render('pages/index', {
