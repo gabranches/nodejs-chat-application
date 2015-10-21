@@ -9,15 +9,20 @@
           <div class="col-xs-4"></div>
           <div class="col-xs-4">
             <form method="post" id="front-page-form">
+
               <div class="form-group">
                 <label for="room">Enter a room name:</label>
                 <input type="text" class="form-control" id="room" name="room">
               </div>
-              <div class="form-group">
+
+              <div id="name-group" class="form-group has-feedback">
                 <label for="nick">Enter your name (optional):</label>
-                <input type="text" class="form-control" id="nick" name="nick" placeholder="Anonymous">
+                <input type="text" class="form-control" id="nick" name="nick" placeholder="Guest">
+                <span id="name-error" class="glyphicon glyphicon-remove form-control-feedback"></span>
               </div>
-              <button type="button" onclick="submitForm();" class="btn btn-default">Submit</button>
+
+              <button type="button" onclick="submitForm();" class="btn btn-default">Join Room</button>
+              <img id="change-name-loader" src="/images/ajax-loader.gif" />
             </form>
           </div>
           <div class="col-xs-4"></div>

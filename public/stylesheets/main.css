@@ -70,7 +70,8 @@
 #change-name-error,
 #change-name-success,
 #change-name-form,
-#change-name-loader {
+#change-name-loader,
+#name-error {
 	display: none;
 }
 
