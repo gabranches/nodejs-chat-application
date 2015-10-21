@@ -11,7 +11,7 @@ socket.on('connect', function () {
 });
 
 // Send message to server
-$('form').submit(function(){
+$('#msg-form').submit(function(){
     client.msg = $('#message').val();
     socket.emit('msg-to-server', client);
     printMessage({socketID: client.socketID, msg: client.msg, nick: client.nick});
@@ -19,16 +19,25 @@ $('form').submit(function(){
     return false;
 });
 
+// Edit name
 $(".glyphicon-pencil").click(function() {
-    $.ajax({
-      url: 'ajax/changename',
-      type: 'POST',
-      data: {nick: client.nick},
-    }).done(function() {
-        alert('sucess');
-    }).fail(function() {
-        alert('fail');
-    });
+    $("#status-nick").hide();
+    $(this).hide();
+    $("#change-name-form").show();
+});
+
+// Send changed name to server
+$('#change-name-form').submit(function(){
+    $("#change-name-button").hide();
+    $("#change-name-loader").show();
+    client.newname = $("#change-name-input").val();
+    changeName();
+    return false;
+});
+
+// Receive change name response
+socket.on('change-name-response', function(data){
+
 });
 
 // Receive message from server

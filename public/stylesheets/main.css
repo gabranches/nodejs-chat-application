@@ -1,3 +1,7 @@
+.form-inline {
+	display: inline-block;
+}
+
 
 #chatbox {
 	margin-top: 41px;
@@ -59,3 +63,15 @@
 .glyphicon-pencil {
 	cursor: pointer;
 }
+
+#change-name-error,
+#change-name-success,
+#change-name-form,
+#change-name-loader {
+	display: none;
+}
+
+#change-name-loader {
+	margin-left: 10px;
+}
+

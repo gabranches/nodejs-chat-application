@@ -1,3 +1,25 @@
+function changeName() {
+  $.ajax({
+      url: 'ajax/changename',
+      type: 'POST',
+      dataType: 'json',
+      data: {
+        nick: client.nick,
+        newname: client.newname,
+        room: client.room,
+        socketID: client.socketID
+      },
+    }).done(function(data) {
+        if(data.result === "Success") {
+          alert('name changed');
+        } else {
+          alert('name taken');
+        }
+    }).fail(function() {
+        alert('The request failed. Please try again.');
+    });
+}
+
 function submitForm() {
     var form = $("#front-page-form");
     form.attr("action", "/" + $("#room").val().trim());

@@ -45,12 +45,18 @@ app.get('/api/sessions', function (request, response) {
     response.json(request.session);
 });
 
+// Process a name change ajax request
 app.post('/ajax/changename', function (request, response) {
-    var nick = request.body.nick;
-    request.session.nick = nick;
 
-    response.send({result: 'Name changed successfully.'});
-    response.send({result: 'This name is already taken. Please choose another name.'});
+    var client = request.body;
+
+    if (chat.checkIfNameIsTaken(client.room, client.newname)) {
+        chat.logEvent('Name taken');
+        response.send({result: 'Fail'});
+    } else {
+        chat.logEvent('Name available');
+        response.send({result: 'Success'});
+    }
 
 });
 
