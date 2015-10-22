@@ -64,6 +64,7 @@ function submitForm() {
 }
 
 function printMessage(data) {
+    data.msg = formatLinks(data.msg);
     // Print message to chat box
     if (data.socketID === client.socketID) {
         // If own message
@@ -100,3 +101,27 @@ function resize() {
     $('#chatbox').css('height', height - 130 + 'px');
 }
 
+function formatLinks(text) {
+  var regex = /((http:\/\/|https:\/\/|www\.)\S*)\s*/gi;
+  var matches = text.match(regex);
+
+  if (matches) {
+    console.log('hit loop');
+    matches.forEach(function (link) {
+      // Remove whitespace
+      link = link.trim();
+      
+      // Add http to www. links
+      var www_match = link.match(/^www.*/gi);
+      if (www_match) {
+        text = text.replace(link, 'http://' + link);
+        link = 'http://' + link;
+      }
+
+      // Add links to text 
+      text = text.replace(link, '<a target="_blank" href="'+link+'">'+link+'</a>')
+    });
+  }
+
+  return text;
+}
