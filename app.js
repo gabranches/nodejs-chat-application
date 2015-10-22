@@ -48,9 +48,16 @@ app.get('/api/room/:room?', function (request, response) {
 app.post('/ajax/changename', function (request, response) {
     var client = request.body;
 
+    // Check for upper/lowercase changes
+    if (client.newname.toLowerCase() == client.nick.toLowerCase()) {
+        request.session.nick = client.newname;
+        response.send({result: 'Success'});
+
     // Check if name is taken
-    if (chat.checkIfNameIsTaken(client.room, client.newname)) {
+    } else if (chat.checkIfNameIsTaken(client.room, client.newname)) {
         response.send({result: 'Fail'});
+
+    // Name available    
     } else {
         // Assign new name to session
         request.session.nick = client.newname;
@@ -68,8 +75,10 @@ app.post('/ajax/changename', function (request, response) {
 app.post('/ajax/namecheck', function (request, response) {
     var client = request.body;
     // Return true if the name is stored in the user's session
-    if (client.nick == request.session.nick) {
-        response.send({result: 'Success'});
+    if (request.session.nick) {
+        if (client.nick.toLowerCase() == request.session.nick.toLowerCase()) {
+            response.send({result: 'Success'});
+        }
     // Check if name is taken
     } else if (chat.checkIfNameIsTaken(client.room, client.nick)) {
         response.send({result: 'Fail'});
