@@ -74,13 +74,18 @@ app.post('/ajax/changename', function (request, response) {
 /* AJAX: Check if a name is taken */
 app.post('/ajax/namecheck', function (request, response) {
     var client = request.body;
+    
     // Return true if the name is stored in the user's session
     if (request.session.nick) {
+        // Check for case
         if (client.nick.toLowerCase() == request.session.nick.toLowerCase()) {
             response.send({result: 'Success'});
+            return false;
         }
+    }
+
     // Check if name is taken
-    } else if (chat.checkIfNameIsTaken(client.room, client.nick)) {
+    if (chat.checkIfNameIsTaken(client.room, client.nick)) {
         response.send({result: 'Fail'});
     } else {
         response.send({result: 'Success'});
