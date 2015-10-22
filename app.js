@@ -64,12 +64,10 @@ app.post('/ajax/changename', function (request, response) {
         // Change user nick in roomList
         chat.changeName(client.room, client.nick, client.newname);
         response.send({result: 'Success'});
-        chat.sendMessage('msg-to-room', 'server', 'Admin', client.room,
-                         '<span class="admin-name">' + client.nick + 
-                         '</span> is now known as <span class="admin-name">' + 
-                         client.newname + '</span>.');
+
     }
 });
+
 
 /* AJAX: Check if a name is taken */
 app.post('/ajax/namecheck', function (request, response) {
@@ -77,20 +75,19 @@ app.post('/ajax/namecheck', function (request, response) {
     
     // Return true if the name is stored in the user's session
     if (request.session.nick) {
-        // Check for case
         if (client.nick.toLowerCase() == request.session.nick.toLowerCase()) {
             response.send({result: 'Success'});
             return false;
         }
     }
 
-    // Check if name is taken
     if (chat.checkIfNameIsTaken(client.room, client.nick)) {
         response.send({result: 'Fail'});
     } else {
         response.send({result: 'Success'});
     }
 });
+
 
 /* Load room page (GET) */
 app.get('/:room', function (request, response) {
@@ -106,6 +103,7 @@ app.get('/:room', function (request, response) {
         }
     });
 });
+
 
 /* Grabs the user nick, assigns to session, then redirects to the room */
 app.post('/:room', function (request, response) {

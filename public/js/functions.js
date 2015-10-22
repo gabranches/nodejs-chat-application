@@ -16,24 +16,38 @@ function changeName() {
         if(data.result === 'Success') {
           // Name change successful
           client.nick = client.newname;
-          $('#change-name-form').hide();
-          $('#status-nick').text(client.nick);
-          $('#status-nick').show();
-          $('.glyphicon-pencil').show();
-          $('#change-name-form div:first-child').attr('class', 'form-group has-feedback');
-          $("#change-name-error").hide();
+          toggleChangNameForm("off");
         } else {
           // Name change fail (name already taken)
-          $('#change-name-form div:first-child').attr('class', 'form-group has-error has-feedback');
-          $("#change-name-input").val('');
-          $("#change-name-input").attr('placeholder', 'Name already taken.');
-          $("#change-name-error").show();
+          toggleChangNameForm("error");
         }
     }).fail(function() {
         alert('The request failed. Please try again.');
     });
 }
 
+function toggleChangNameForm(state) {
+  if (state === "off") {
+    $('#change-name-form').hide();
+    $('#status-nick').text(client.nick);
+    $('#status-nick').show();
+    $('#change-name').show();
+    $('#change-name-form div:first-child').attr('class', 'form-group has-feedback');
+    $("#change-name-error").hide();
+  } else if (state === "error") {
+    $('#change-name-form div:first-child').attr('class', 'form-group has-error has-feedback');
+    $("#change-name-input").val('');
+    $("#change-name-input").attr('placeholder', 'Name already taken.');
+    $("#change-name-error").show();
+  } else {
+    $("#status-nick").hide();
+    $("#change-name").hide();
+    $("#change-name-form").show();
+    $("#change-name-input").focus();
+  }
+}
+
+// Submits the front page form
 function submitForm() {
   // First check if name is already taken
   $.ajax({
@@ -63,6 +77,34 @@ function submitForm() {
     });
 }
 
+// Apend typing users to status bar
+function updateTypingStatus() {
+  var typingText = '';
+  var i = 0;
+
+  // One typer
+  if (typingList.length == 1) {
+    typingText = typingList[0] + ' is typing...';
+  
+  // Multiple typers
+  } else if (typingList.length > 1)  {
+    typingList.forEach(function (user) {
+      if (i > 0) {
+        typingText += ", ";
+      }
+      typingText += user
+      i++;
+    });
+    typingText += ' are typing...';
+  }
+
+  $("#typing-users").text(typingText);
+}
+
+function stopTyping() {
+  socket.emit('typing-to-server', {room: client.room, status: 0, nick: client.nick});
+}
+
 function printMessage(data) {
     data.msg = formatLinks(data.msg);
     // Print message to chat box
@@ -79,8 +121,8 @@ function printMessage(data) {
     $("#chatbox").prop({ scrollTop: $("#chatbox").prop("scrollHeight") });
 }
 
+// Makes page title flash on tap if it is out of focus
 function flashTitle(title) {
-  // Makes page title flash on tap if it is out of focus
   if (document.hasFocus()){
     document.title = title;
     clearInterval(timer);
@@ -95,8 +137,8 @@ function flashTitle(title) {
   }
 }
 
+// Resize chat window to fit screen properly
 function resize() {
-    // Resize chat window to fit screen properly
     var height = $(window).height();
     $('#chatbox').css('height', height - 130 + 'px');
 }

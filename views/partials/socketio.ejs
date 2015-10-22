@@ -16,21 +16,20 @@ $('#msg-form').submit(function(){
     socket.emit('msg-to-server', client);
     printMessage({socketID: client.socketID, msg: client.msg, nick: client.nick});
     $('#message').val('');
+    stopTyping();
     return false;
 });
 
 // Edit name
-$(".glyphicon-pencil").click(function() {
-    $("#status-nick").hide();
-    $(this).hide();
-    $("#change-name-form").show();
-    $("#change-name-input").focus();
+$("#change-name").click(function() {
+    toggleChangNameForm("on");
 });
 
 // Send changed name to server
 $('#change-name-form').submit(function(){
     var newname = $("#change-name-input").val().trim();
     if (newname !== '' && newname.length < 30) {
+        stopTyping();
         $("#change-name-button").hide();
         $("#change-name-loader").show();
         client.newname = newname;
@@ -39,6 +38,20 @@ $('#change-name-form').submit(function(){
     return false;
 });
 
+// Send the client's typing behavior
+$("#message").keyup(function() {
+    if ($(this).val() === '') {
+        console.log('stopped typing');
+        stopTyping();
+    } else {
+        if (typingList.indexOf(client.nick) === -1) {
+            console.log('sent typing');
+            socket.emit('typing-to-server', {room: client.room, status: 1, nick: client.nick});
+        }
+    }
+});
+
+
 // Hide change name form when user clicks out of it
 $('#change-name-input').blur(function(){
     $('#change-name-form').hide();
@@ -46,13 +59,9 @@ $('#change-name-input').blur(function(){
     $('.glyphicon-pencil').show();
 });
 
-// Receive change name response
-socket.on('change-name-response', function(data){
-
-});
 
 // Receive message from server
-socket.on('msg-to-room', function(data){
+socket.on('msg-to-room', function (data){
     if (data.socketID !== client.socketID) {
         printMessage(data);
         flashTitle(client.room);
@@ -63,6 +72,24 @@ socket.on('msg-to-room', function(data){
 socket.on('room-status', function(data){
     console.log('Received room info.');
     $('#active-users').html('<span class="glyphicon glyphicon-user"></span> ' + data.msg.users);
+});
+
+// Receive client typing behavior
+socket.on('typing-to-client', function (data) {
+    console.log('received typing info');
+    if (data.status === 1) {
+        // Push user to typing array if not already in
+        if (typingList.indexOf(data.nick) === -1) {
+            typingList.push(data.nick);
+        }
+    } else {
+        // Remove user from typing array
+        var index = typingList.indexOf(data.nick);
+        typingList.splice(index, 1);
+    }
+    
+    updateTypingStatus();
+
 });
 
 // Print recent messages

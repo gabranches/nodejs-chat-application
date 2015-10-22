@@ -19,10 +19,12 @@
             <img id="change-name-loader" src="/images/ajax-loader.gif" />
           </form>
 
-          <icon class="glyphicon glyphicon-pencil" title="Change Name"></icon>
+          <icon id="change-name" class="glyphicon glyphicon-pencil" title="Change Name"></icon>
         </div>
 
         <div class="status-div" id="active-users">
+        </div>
+        <div class="status-div" id="typing-users">
         </div>
       </div>
 
@@ -52,6 +54,7 @@
       var timerOn = false;
       var timer;
       var recentMessages = [];
+      var typingList = [];
 
       $(document).ready(function() {
           resize();
