@@ -80,25 +80,35 @@ function submitForm() {
 // Apend typing users to status bar
 function updateTypingStatus() {
   var typingText = '';
+  var extraUsers = '';
+  var suffix = '';
   var i = 0;
 
   // One typer
   if (typingList.length == 1) {
-    typingText = typingList[0] + ' is typing...';
+    typingText = typingList[0];
+    suffix = ' is typing...';
   
   // Multiple typers
   } else if (typingList.length > 1)  {
+    
     typingList.forEach(function (user) {
-      if (i > 0) {
-        typingText += ", ";
+      
+      if (i >= 0 && i < 4) {
+        if (i > 0 && i < 4) {
+          typingText += ", "; 
+        }
+        typingText += user;
+      } else if (i == typingList.length - 1 ) {
+        extraUsers += ', +' + (typingList.length - 4) + ' users';
       }
-      typingText += user
       i++;
     });
-    typingText += ' are typing...';
+
+    suffix += ' are typing...';
   }
 
-  $("#typing-users").text(typingText);
+  $("#typing-users").text(typingText + extraUsers + suffix);
 }
 
 function stopTyping() {
