@@ -80,37 +80,15 @@ function submitForm() {
 // Apend typing users to status bar
 function updateTypingStatus() {
   var typingText = '';
-  var extraUsers = '';
-  var suffix = '';
-  var i = 0;
-
-  // One typer
   if (typingList.length == 1) {
-    typingText = typingList[0];
-    suffix = ' is typing...';
-  
-  // Multiple typers
+    typingText = typingList[0] + ' is typing...';
   } else if (typingList.length > 1)  {
-    
-    typingList.forEach(function (user) {
-      
-      if (i >= 0 && i < 4) {
-        if (i > 0 && i < 4) {
-          typingText += ", "; 
-        }
-        typingText += user;
-      } else if (i == typingList.length - 1 ) {
-        extraUsers += ', +' + (typingList.length - 4) + ' users';
-      }
-      i++;
-    });
-
-    suffix += ' are typing...';
+    typingText = (typingList.length) + ' users are typing...';
   }
-
-  $("#typing-users").text(typingText + extraUsers + suffix);
+  $("#typing-users").text(typingText);
 }
 
+// Send a message to server saying that the user stopped typing
 function stopTyping() {
   socket.emit('typing-to-server', {room: client.room, status: 0, nick: client.nick});
 }

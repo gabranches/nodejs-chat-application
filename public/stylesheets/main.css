@@ -83,3 +83,12 @@
 #front-page-form {
 	margin-top: 50px;
 }
+
+#change-name-input {
+	height: 20px;
+	font-size: 12px;
+}
+
+#typing-users {
+	font-size: 12px;
+}

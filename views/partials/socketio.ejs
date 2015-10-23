@@ -79,13 +79,15 @@ socket.on('typing-to-client', function (data) {
     console.log('received typing info');
     if (data.status === 1) {
         // Push user to typing array if not already in
-        if (typingList.indexOf(data.nick) === -1) {
+        if (typingList.indexOf(data.nick) === -1 && data.nick !== client.nick) {
             typingList.push(data.nick);
         }
     } else {
         // Remove user from typing array
-        var index = typingList.indexOf(data.nick);
-        typingList.splice(index, 1);
+        if (data.nick !== client.nick) {
+            var index = typingList.indexOf(data.nick);
+            typingList.splice(index, 1);
+        }
     }
     
     updateTypingStatus();
