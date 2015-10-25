@@ -46,7 +46,7 @@
 	color: red;
 }
 
-.btn-primary {
+#send-button {
 	width: 100%;
 }
 
@@ -69,8 +69,6 @@
 }
 
 #change-name-error,
-#change-name-success,
-#change-name-form,
 #change-name-loader,
 #name-error {
 	display: none;
@@ -84,11 +82,10 @@
 	margin-top: 50px;
 }
 
-#change-name-input {
-	height: 20px;
+#typing-users {
 	font-size: 12px;
 }
 
-#typing-users {
-	font-size: 12px;
+#change-name-form {
+	margin-top: 20px;
 }

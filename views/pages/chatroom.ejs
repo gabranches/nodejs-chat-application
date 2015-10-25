@@ -11,13 +11,6 @@
           
           <span id="status-nick"></span>
 
-          <form id="change-name-form" class="form-inline">
-            <div class="form-group has-feedback">
-              <input type="text" class="form-control" id="change-name-input" placeholder="Enter a new name">
-              <span id="change-name-error" class="glyphicon glyphicon-remove form-control-feedback"></span>
-            </div>
-            <img id="change-name-loader" src="/images/ajax-loader.gif" />
-          </form>
 
           <icon id="change-name" class="glyphicon glyphicon-pencil" title="Change Name"></icon>
         </div>
@@ -38,11 +31,44 @@
             <input class="form-control" id="message" autocomplete="off" placeholder="Type a message and press enter to send" />
           </div>
           <div class="text-center col-xs-3 col-sm-2 col-md-1">
-            <button class='btn btn-primary'>Send</button>
+            <button id="send-button" class='btn btn-primary'>Send</button>
           </div>
         </form>
       </div>    
-    </div>   
+    </div>
+
+    <!-- Change name modal -->
+
+    <div class="modal fade" id="change-name-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Change Name</h4>
+          </div>
+          <div class="modal-body">
+
+            Enter a new name (must be less than 30 characters long): <br />
+
+            <form id="change-name-form" class="form-inline" onsubmit="return false">
+              <div class="form-group has-feedback">
+                <input type="text" class="form-control" id="change-name-input" placeholder="Enter a new name">
+                <span id="change-name-error" class="glyphicon glyphicon-remove form-control-feedback"></span>
+              </div>
+              <img id="change-name-loader" src="/images/ajax-loader.gif" />
+            
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button id="change-name-submit" type="submit" class="btn btn-primary">Save changes</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- End modal -->
     
     <script>
       var client = {};

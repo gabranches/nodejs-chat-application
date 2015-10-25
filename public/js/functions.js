@@ -16,6 +16,8 @@ function changeName() {
         if(data.result === 'Success') {
           // Name change successful
           client.nick = client.newname;
+          $('#status-nick').text(client.nick);
+          $("#change-name-modal").modal('hide');
           toggleChangNameForm("off");
         } else {
           // Name change fail (name already taken)
@@ -28,8 +30,6 @@ function changeName() {
 
 function toggleChangNameForm(state) {
   if (state === "off") {
-    $('#change-name-form').hide();
-    $('#status-nick').text(client.nick);
     $('#status-nick').show();
     $('#change-name').show();
     $('#change-name-form div:first-child').attr('class', 'form-group has-feedback');
@@ -39,10 +39,10 @@ function toggleChangNameForm(state) {
     $("#change-name-input").val('');
     $("#change-name-input").attr('placeholder', 'Name already taken.');
     $("#change-name-error").show();
+    $("#change-name-input").focus();
   } else {
     $("#status-nick").hide();
     $("#change-name").hide();
-    $("#change-name-form").show();
     $("#change-name-input").focus();
   }
 }
@@ -131,6 +131,8 @@ function resize() {
     $('#chatbox').css('height', height - 130 + 'px');
 }
 
+
+// Format hyperlinks
 function formatLinks(text) {
   var regex = /((http:\/\/|https:\/\/|www\.)\S*)\s*/gi;
   var matches = text.match(regex);

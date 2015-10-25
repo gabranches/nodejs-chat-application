@@ -22,7 +22,8 @@ $('#msg-form').submit(function(){
 
 // Edit name
 $("#change-name").click(function() {
-    toggleChangNameForm("on");
+    // toggleChangNameForm("on");
+    $('#change-name-modal').modal()
 });
 
 // Send changed name to server
@@ -30,13 +31,14 @@ $('#change-name-form').submit(function(){
     var newname = $("#change-name-input").val().trim();
     if (newname !== '' && newname.length < 30) {
         stopTyping();
-        $("#change-name-button").hide();
         $("#change-name-loader").show();
         client.newname = newname;
         changeName();
     }
     return false;
 });
+
+
 
 // Send the client's typing behavior
 $("#message").keyup(function() {
@@ -49,14 +51,6 @@ $("#message").keyup(function() {
             socket.emit('typing-to-server', {room: client.room, status: 1, nick: client.nick});
         }
     }
-});
-
-
-// Hide change name form when user clicks out of it
-$('#change-name-input').blur(function(){
-    $('#change-name-form').hide();
-    $('#status-nick').show();
-    $('.glyphicon-pencil').show();
 });
 
 
