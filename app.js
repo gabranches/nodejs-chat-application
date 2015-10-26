@@ -93,6 +93,7 @@ app.post('/ajax/namecheck', function (request, response) {
 app.get('/:room', function (request, response) {
     var room = request.params.room.toLowerCase().split(' ').join('');  
     var nick = request.session.nick ? request.session.nick : chat.getGuestNick(room);
+    chat.logEvent(request.session.id);
 
     // Render room page
     response.render('pages/chatroom', {
@@ -115,7 +116,7 @@ app.post('/:room', function (request, response) {
     response.redirect('/' + room);
 });
 
-
+// Front page
 app.get('/', function (request, response) {
     response.render('pages/index', {
         locals: {
@@ -124,6 +125,7 @@ app.get('/', function (request, response) {
         }
     });
 });
+
 
 app.listen(app.get('port'), function () {
     chat.logEvent('Node app is running.');

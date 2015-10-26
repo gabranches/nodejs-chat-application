@@ -11,8 +11,9 @@ function changeName() {
         socketID: client.socketID
       },
     }).done(function(data) {
-        // AJAX request succeeded
+        // AJAX request successful
         $('#change-name-loader').hide();
+        
         if(data.result === 'Success') {
           // Name change successful
           client.nick = client.newname;
@@ -28,10 +29,9 @@ function changeName() {
     });
 }
 
+// Handles error effects in the change name input field
 function toggleChangNameForm(state) {
   if (state === "off") {
-    $('#status-nick').show();
-    $('#change-name').show();
     $('#change-name-form div:first-child').attr('class', 'form-group has-feedback');
     $("#change-name-error").hide();
   } else if (state === "error") {
@@ -41,8 +41,6 @@ function toggleChangNameForm(state) {
     $("#change-name-error").show();
     $("#change-name-input").focus();
   } else {
-    $("#status-nick").hide();
-    $("#change-name").hide();
     $("#change-name-input").focus();
   }
 }
