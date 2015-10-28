@@ -7,7 +7,6 @@ var socket = io();
 // Send client info to server
 socket.on('connect', function () { 
     socket.emit('user-connect', client);
-    client.socketID = socket.io.engine.id;
 });
 
 // Send message to server
