@@ -3,13 +3,14 @@
 
 var socket = io();
 
-var socketHelper = (function() {
+var socketHelper = (function () {
+    'use strict';
     var me = {};
 
     //-- Functions --//
 
     // Helper function to emit messages from outside the module
-    me.emit = function(channel, data) {
+    me.emit = function (channel, data) {
         socket.emit(channel, data);
     }
 
@@ -19,6 +20,7 @@ var socketHelper = (function() {
     socket.on('connect', function () { 
         chat.client.socketID = socket.io.engine.id;
         socket.emit('user-connect', chat.client);
+        $("#status-nick").html(chat.client.nick);
     });
 
     //-- Incoming Events --//
