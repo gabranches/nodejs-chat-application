@@ -22,18 +22,18 @@ var chat = (function () {
 
     // Chat DOM elements
     var elems = {
-        nickDisplay: $("#status-nick"),
-        chgNameInput: $("#change-name-input"),
-        chgNameLoader: $('#change-name-loader'),
+        nickDisplay:    $("#status-nick"),
+        chgNameInput:   $("#change-name-input"),
+        chgNameLoader:  $('#change-name-loader'),
         chgNameFormDiv: $('#change-name-form div:first-child'),
-        chgNameModal: $("#change-name-modal"),
-        chgNameError: $("#change-name-error"),
-        chatbox: $('#chatbox'),
-        message: $('#message'),
-        typingStatus: $("#typing-users"),
-        chgNameButton: $("#change-name"),
-        chgNameForm: $('#change-name-form'),
-        msgForm: $('#msg-form')
+        chgNameModal:   $("#change-name-modal"),
+        chgNameError:   $("#change-name-error"),
+        chatBox:        $('#chatbox'),
+        messageBox:     $('#message'),
+        typingStatus:   $("#typing-users"),
+        chgNameButton:  $("#change-name"),
+        chgNameForm:    $('#change-name-form'),
+        msgForm:        $('#msg-form')
     };
 
     //-- Functions -- //
@@ -102,15 +102,15 @@ var chat = (function () {
         // Print message to chat box
         if (data.socketID === this.client.socketID) {
             // If own message
-            elems.chatbox.append($('<div class="own message"><span class="author">' + data.nick + '</span>: ' + data.msg + '</div>'));
+            elems.chatBox.append($('<div class="own message"><span class="author">' + data.nick + '</span>: ' + data.msg + '</div>'));
         } else if (data.nick === 'Admin') {
             // If admin message
-            elems.chatbox.append($('<div class="message"><span class="admin">' + data.msg + '</span></div>'));
+            elems.chatBox.append($('<div class="message"><span class="admin">' + data.msg + '</span></div>'));
         } else {
             // Regular message
-            elems.chatbox.append($('<div class="message"><span class="author">' + data.nick + '</span>: ' + data.msg + '</div>'));
+            elems.chatBox.append($('<div class="message"><span class="author">' + data.nick + '</span>: ' + data.msg + '</div>'));
         }
-        elems.chatbox.prop({ scrollTop: elems.chatbox.prop("scrollHeight") });
+        elems.chatBox.prop({ scrollTop: elems.chatBox.prop("scrollHeight") });
     }
 
     // Makes page title flash on tap if it is out of focus
@@ -132,7 +132,7 @@ var chat = (function () {
     // Resize chat window to fit screen properly
     me.resize = function () {
         var height = $(window).height();
-        elems.chatbox.css('height', height - 130 + 'px');
+        elems.chatBox.css('height', height - 130 + 'px');
     }
 
     // Send a message to server saying that the user stopped typing
@@ -199,7 +199,7 @@ var chat = (function () {
     });
 
     // Send the client's typing behavior
-    elems.message.keyup(function() {
+    elems.messageBox.keyup(function() {
         if ($(this).val() === '') {
             me.stopTyping();
         } else {
@@ -223,14 +223,14 @@ var chat = (function () {
 
     // Send message to server
     elems.msgForm.submit(function(){
-        chat.client.msg = elems.message.val();
+        chat.client.msg = elems.messageBox.val();
         socketHelper.emit('msg-to-server', chat.client);
         chat.printMessage({
             socketID: chat.client.socketID,
             msg: chat.client.msg,
             nick: chat.client.nick
         });
-        elems.message.val('');
+        elems.messageBox.val('');
         me.stopTyping();
         return false;
     });
