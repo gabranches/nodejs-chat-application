@@ -40,44 +40,51 @@ var chat = (function () {
 
     // Send an AJAX request with the name change
     me.changeName = function () {
-        $.ajax({
-            url: 'ajax/changename',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                nick: this.client.nick,
-                newname: this.client.newname,
-                room: this.client.room,
-                socketID: this.client.socketID
-            }
-        }).done(function(data) {
-            // AJAX request successful
-            elems.chgNameLoader.hide();
 
-            if (data.result === 'Success') {
-                // Name change successful
-                me.client.nick = me.client.newname;
-                elems.nickDisplay.text(me.client.nick);
-                elems.chgNameModal.modal('hide');
-                me.toggleChangeNameForm("off");
-            } else {
-                // Name change fail (name already taken)
-                me.toggleChangeNameForm("error");
-            }
-        }).fail(function() {
-            alert('The request failed. Please try again.');
-        });
+        // Check for name length
+        if (this.client.newname.length > 24) {
+          me.toggleChangeNameForm('error', 'Name is too long');
+        } else {
+            elems.chgNameLoader.show();
+            $.ajax({
+                url: 'ajax/changename',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    nick: this.client.nick,
+                    newname: this.client.newname,
+                    room: this.client.room,
+                    socketID: this.client.socketID
+                }
+            }).done(function(data) {
+                // AJAX request successful
+                elems.chgNameLoader.hide();
+
+                if (data.result === 'Success') {
+                    // Name change successful
+                    me.client.nick = me.client.newname;
+                    elems.nickDisplay.text(me.client.nick);
+                    elems.chgNameModal.modal('hide');
+                    me.toggleChangeNameForm('off');
+                } else {
+                    // Name change fail (name already taken)
+                    me.toggleChangeNameForm('error', 'Name already taken.');
+                }
+            }).fail(function() {
+                alert('The request failed. Please try again.');
+            });
+        }
     }
 
     // Handles error effects in the change name input field
-    me.toggleChangeNameForm = function (state) {
+    me.toggleChangeNameForm = function (state, text) {
         if (state === "off") {
             elems.chgNameFormDiv.attr('class', 'form-group has-feedback');
             elems.chgNameError.hide();
         } else if (state === "error") {
             elems.chgNameFormDiv.attr('class', 'form-group has-error has-feedback');
             elems.chgNameInput.val('');
-            elems.chgNameInput.attr('placeholder', 'Name already taken.');
+            elems.chgNameInput.attr('placeholder', text);
             elems.chgNameError.show();
             elems.chgNameInput.focus();
         } else {
@@ -212,9 +219,8 @@ var chat = (function () {
     // Send changed name to server
     elems.chgNameForm.submit(function(){
         var newname = elems.chgNameInput.val().trim();
-        if (newname !== '' && newname.length < 30) {
+        if (newname !== '') {
             me.stopTyping();
-            elems.chgNameLoader.show();
             chat.client.newname = newname;
             chat.changeName();
         }
