@@ -6,7 +6,8 @@ var bodyParser = require('body-parser');
 var server = app.listen(process.env.PORT || 5000);
 var io = require('socket.io').listen(server);
 var roomList = {};
-var chat = require('./lib/chat.js')(io, roomList);
+var socketList = {};
+var chat = require('./lib/chat.js')(io, roomList, socketList);
 
 
 // Session variables
@@ -42,6 +43,11 @@ app.get('/api/room/:room?', function (request, response) {
     } else {
         response.json(roomList);
     }
+});
+
+/* API: Shows all active sockets in JSON format. */
+app.get('/api/sockets', function (request, response) {
+    response.json(socketList);
 });
 
 /* AJAX: Process a name change ajax request */
@@ -113,8 +119,17 @@ app.post('/:room', function (request, response) {
     var room = request.body.room.toLowerCase().split(' ').join('');
     var nick = request.body.nick;
 
-    // Generate a guest name if there is no session variable
-    request.session.nick = nick === '' ? chat.getGuestNick(room) : nick;
+    
+    if (request.session.nick) {
+        // Use session variable if nick is blank
+        if (!(nick === '')) {
+            request.session.nick  = nick;
+        }
+    } else {
+        // Generate a guest name if there is no session variable
+        request.session.nick = nick === '' ? chat.getGuestNick(room) : nick;
+    }
+    
     response.redirect('/' + room);
 });
 
@@ -134,4 +149,4 @@ app.listen(app.get('port'), function () {
 });
 
 
-require('./lib/io.js')(io, chat, roomList)
+require('./lib/io.js')(io, chat, roomList, socketList);
