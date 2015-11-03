@@ -133,6 +133,25 @@ app.post('/:room', function (request, response) {
     response.redirect('/' + room);
 });
 
+/* Grabs the user nick, assigns to session, then redirects to a random room */
+app.post('/', function (request, response) {
+
+    var nick = request.body.nick;
+    room = chat.generateRoom();
+    
+    if (request.session.nick) {
+        // Use session variable if nick is blank
+        if (!(nick === '')) {
+            request.session.nick  = nick;
+        }
+    } else {
+        // Generate a guest name if there is no session variable
+        request.session.nick = nick === '' ? chat.getGuestNick(room) : nick;
+    }
+
+    response.redirect('/' + room);
+});
+
 // Front page
 app.get('/', function (request, response) {
     response.render('pages/index', {

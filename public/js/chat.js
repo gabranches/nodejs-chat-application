@@ -1,5 +1,5 @@
 
-//-- Chat room module --//
+//-- Chat room front-end module --//
 
 var chat = (function () {
     'use strict';
