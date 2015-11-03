@@ -19,6 +19,21 @@ html, body {
 	margin-left: -10px;
 }
 
+.modal-header {
+	border-bottom: 4px solid #5CA9EC;
+	background-color: #115090;
+	color: white;
+}
+
+.modal-body, .modal-footer {
+	background-color: #F0F8FF;
+}
+
+.modal-footer .btn-primary {
+	background-color: #115090;
+	border: 1px solid #5CA9EC;
+}
+
 .form-control, .btn, .modal-content {
 	border-radius: 0px 0px 0px 0px;
 	-moz-border-radius: 0px 0px 0px 0px;
@@ -52,8 +67,9 @@ html, body {
 }
 
 #chatbox {
-	margin-top: 41px;
+	margin-top: 24px;
 	padding: 0 30px;
+	padding-top: 25px;
 	overflow: auto;
 	height: 200px;
 	background-color: #F0F8FF;
@@ -89,16 +105,18 @@ html, body {
 }
 
 .admin {
-	color: red;
+	color: #C10000;
 }
 
 .admin-name {
 	font-weight: bold;
-	color: red;
+	color: #C10000;
 }
 
 #send-button {
 	width: 100%;
+	background-color: #115090;
+	border: 1px solid #5CA9EC;
 }
 
 .status-div {
