@@ -22,18 +22,24 @@ var chat = (function () {
 
     // Chat DOM elements
     var elems = {
-        nickDisplay:    $("#status-nick"),
-        chgNameInput:   $("#change-name-input"),
+        nickDisplay:    $('#status-nick'),
+        chgNameInput:   $('#change-name-input'),
         chgNameLoader:  $('#change-name-loader'),
         chgNameFormDiv: $('#change-name-form div:first-child'),
-        chgNameModal:   $("#change-name-modal"),
-        chgNameError:   $("#change-name-error"),
+        chgNameModal:   $('#change-name-modal'),
+        chgNameError:   $('#change-name-error'),
         chatBox:        $('#chatbox'),
         messageBox:     $('#message'),
-        typingStatus:   $("#typing-users"),
-        chgNameButton:  $("#change-name"),
+        typingStatus:   $('#typing-users'),
+        chgNameButton:  $('#change-name'),
         chgNameForm:    $('#change-name-form'),
-        msgForm:        $('#msg-form')
+        msgForm:        $('#msg-form'), 
+        shareModal:     $('#share-modal'),
+        shareButton:    $('#share-button'),
+        shareLinkInput: $('#share-link-input'),
+        userListModal:  $('#user-list-modal'),
+        userList:       $('#active-user-list'),
+        userButton:     $('#user-button')
     };
 
     //-- Functions -- //
@@ -200,9 +206,25 @@ var chat = (function () {
         me.state.timerOn = false;
     });
 
-    // Edit name
+    // Edit name modal
     elems.chgNameButton.click(function() {
         elems.chgNameModal.modal();
+    });
+
+    // Share modal
+    elems.shareButton.click(function() {
+        elems.shareModal.modal();
+        elems.shareLinkInput.val(chat.client.room);
+    });
+
+    // Select all on focus (share-link)
+    elems.shareLinkInput.focus(function(){
+        elems.shareLinkInput.select();
+    });
+
+    // User list modal
+    elems.userButton.click(function() {
+        elems.userListModal.modal();
     });
 
     // Send the client's typing behavior
@@ -230,12 +252,14 @@ var chat = (function () {
     // Send message to server
     elems.msgForm.submit(function(){
         chat.client.msg = elems.messageBox.val();
-        socketHelper.emit('msg-to-server', chat.client);
-        chat.printMessage({
-            socketID: chat.client.socketID,
-            msg: chat.client.msg,
-            nick: chat.client.nick
-        });
+        if (chat.client.msg.trim() != '') {
+            socketHelper.emit('msg-to-server', chat.client);
+            chat.printMessage({
+                socketID: chat.client.socketID,
+                msg: chat.client.msg,
+                nick: chat.client.nick
+            });
+        }
         elems.messageBox.val('');
         me.stopTyping();
         return false;

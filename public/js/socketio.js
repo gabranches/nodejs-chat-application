@@ -20,7 +20,6 @@ var socketHelper = (function () {
     socket.on('connect', function () { 
         chat.client.socketID = socket.io.engine.id;
         socket.emit('user-connect', chat.client);
-        $("#status-nick").html(chat.client.nick);
     });
 
     //-- Incoming Events --//
@@ -35,7 +34,13 @@ var socketHelper = (function () {
 
     // Receive room status info 
     socket.on('room-status', function(data){
-        $('#active-users').html('<span class="glyphicon glyphicon-user"></span> ' + data.msg.users);
+        var arr = data.msg.users
+        $('#active-users').html(arr.length);
+
+        $('#active-user-list').empty();
+        for (var i=0; i < arr.length; i++) {
+            $('#active-user-list').append('<div class="user-list-entry">'+ arr[i] +'</div>');
+        }
     });
 
     // Receive client typing behavior
