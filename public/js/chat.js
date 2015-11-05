@@ -119,6 +119,7 @@ var chat = (function () {
         } else if (data.nick === 'Admin') {
             // If admin message
             elems.chatBox.append($('<div class="message"><span class="admin">' + data.msg + '</span></div>'));
+            socketHelper.emit('update-request', me.client);
         } else {
             // Regular message
             elems.chatBox.append($('<div class="message"><span class="author">' + data.nick + '</span>: ' + data.msg + '</div>'));
@@ -185,12 +186,6 @@ var chat = (function () {
         me.resize();
     });
 
-    // Update room info every 10 seconds
-    window.setInterval(function () {
-        if (me.client) {
-            socketHelper.emit('update-request', me.client);
-        }
-    }, 10000);
 
     // New message flash notification (window)
     $(window).focus(function () {
